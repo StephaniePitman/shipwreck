@@ -1,6 +1,7 @@
 import { SirenBase } from './siren-base.js';
 import { SirenLink } from './siren-link.js';
 import { SirenAction } from './siren-action.js';
+import { settings } from '../settings/localSettingStorageWrapper.js';
 
 function _finder(q) {
   if (typeof q === 'string') {
@@ -32,7 +33,32 @@ export class SirenEntity extends SirenBase {
     // optional
     this.actions = (this._json['actions'] || []).map((a) => new SirenAction(a));
     this.entities = [];
-    this.links = (this._json['links'] || []).map((l) => new SirenLink(l));
+    this.links = (this._json['links'] || []);
+    switch(settings.getSetting("linkSortStyle")){
+      case "1": // sorting by entire URL
+        this.links = this.links.sort(function(a,b) {
+          if(a.rel[0] < b.rel[0]){
+            return -1;
+          }
+          if(a.rel[0] > b.rel[0]){
+            return 1;
+          }
+          return 0;
+        });
+        break;
+      case "2": // sorting by final value in URL
+        this.links.sort(function(a,b) {
+          if(a.rel[0].split("/")[a.rel[0].split("/").length-1] < b.rel[0].split("/")[b.rel[0].split("/").length-1]){
+            return -1;
+          }
+          if(a.rel[0].split("/")[a.rel[0].split("/").length-1] > b.rel[0].split("/")[b.rel[0].split("/").length-1]){
+            return 1;
+          }
+          return 0;
+        });
+        break;
+    }
+    this.links = this.links.map((l) => new SirenLink(l));
     this.class = this._json['class'] || [];
     this.properties = this._json['properties'] || {};
     this.title = this._json['title'] || '';

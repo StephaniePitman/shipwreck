@@ -11,6 +11,7 @@
 
   <!-- a form for submitting request to a Siren API -->
   <div class="main-form">
+    <input type="button" value="Settings" id="settings-button">
     <form method="post" id="main-form">
       <div class="form-fields">
         <div class="ship-href">
@@ -43,6 +44,28 @@
 
   <!-- injection point for rendering entities -->
   <div id="ship-output"></div>
+
+  <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span id="settings-close-button">&times;</span>
+      <form id="settingsEdit">
+        <p>Link Sort Style</p>
+        <input type="radio" id="default" name="linkSortStyle" value="0">
+        <label for="default">Default</label>
+        <input type="radio" id="entireUrl" name="linkSortStyle" value="1">
+        <label for="entireUrl">Entire Url</label>
+        <input type="radio" id="endUrl" name="linkSortStyle" value="2">
+        <label for="endUrl">End Url</label>
+
+        </br>
+
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+  
+  </div>
 
   <!-- libraries and app logic -->
   <script type="module" src="src/index.js"></script>

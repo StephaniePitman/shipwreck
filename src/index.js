@@ -1,4 +1,6 @@
 import { Shipwreck, _html } from './shipwreck.js';
+import {settings} from "./lib/settings/localSettingStorageWrapper";
+
 
 // notifications
 const flash = {
@@ -87,23 +89,40 @@ document.getElementById('clear-token-button').addEventListener('click', clearTok
 
 // pull auth token from current entity properties
 const pullToken = async function () {
-  flash.clear();
-  const { entity } = ship;
-  if (!entity) {
-    flash.add('There is currently no entity loaded.', 'warning');
-    return;
+  const tenantId = prompt("TenantId:");
+  const userId = prompt("User Id:");
+  const actualUserId = prompt("Actual User Id (impersonation):");
+  var scope = prompt("Scope (default will be *:*:*):");
+  if(!scope){
+    scope = "*:*:*";
   }
-  const token = entity.properties && entity.properties.token;
-  if (!token) {
-    flash.add('No token property was found in the current entity.', 'warning');
-  } else if (token === shipToken.value) {
-    flash.add('Token unchanged.', 'warning');
-  } else {
-    shipToken.value = token;
-    ship.token = token;
-    _setSail();
-    flash.add('Token updated.', 'success');
+  const fsld = prompt("Fsld:");
+  var authEndPoint = prompt("Authentication Service Endpoint (Please select a number between 1 and 3) \n1 - https://auth-dev.proddev.d2l/core \n2 - https://dev-auth.brightspace.com/core \n 3 - https://test-auth.brightspace.com/core");
+  while(!authEndPoint || isNaN(authEndPoint) || (authEndPoint < 0 || authEndPoint > 3)){
+    authEndPoint = prompt("Authentication Service Endpoint (Please select a number between 1 and 3) \n1 - https://auth-dev.proddev.d2l/core \n2 - https://dev-auth.brightspace.com/core \n 3 - https://test-auth.brightspace.com/core");
   }
+
+  var opts = {
+    tenant: tenantId,
+    remoteIssuer: endpoint,
+    scope: scope
+  };
+
+  if(userId) {
+    opts.user = userId;
+  }
+
+  if(actualUserId) {
+    opts.impersonator = actualUserId;
+  }
+
+  if(fsid) {
+    opts.fsid = fsld;
+  }
+
+  alert("THIS FUNCTIONALITY IS NOT COMPLETE. NO TOKEN WILL BE RETURNED");
+  //TODO - Figure out how to use @d2l/gimmeToken or some other package to make a token using this info
+  //another option is how we get oauth tokens in hm-api-test, but it involves the user knowing the username and password of the user they want
 };
 document.getElementById('pull-token-button').addEventListener('click', pullToken);
 
@@ -127,3 +146,26 @@ const _checkHash = function () {
 
 window.onhashchange = _checkHash;
 window.onload = _checkHash;
+
+const _openDialog = function () {
+  document.getElementById("myModal").style.display = "block";
+}
+
+const _closeDialog = function () {
+  document.getElementById("myModal").style.display = "none";
+}
+
+document.getElementById('settings-button').addEventListener('click', _openDialog);
+document.getElementById('settings-close-button').addEventListener('click', _closeDialog);
+
+const _updateSettings = function (e) {
+
+  const form = document.getElementById('settingsEdit');
+
+  settings.setSettings(form.elements);
+
+  _closeDialog();
+  return false;
+}
+
+document.getElementById('settingsEdit').addEventListener('submit',_updateSettings);
