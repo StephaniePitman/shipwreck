@@ -79,3 +79,23 @@ as per [this proposal](https://groups.google.com/forum/#!msg/siren-hypermedia/8m
   ]
 }
 ```
+
+## Added Functionality
+
+### Link Sort Styles
+
+It can be hard to manually find your link when an entity returns a large number of them. Now you can use the new "Settings" button to set up the prefered sorting method for the returned links. The sorting methods include...
+
+1. "Default" - No sorting added. Only shows links as recevied
+2. "Entire Url" - Links will be ordered according to their full rel URL
+  - ex.
+
+    - `abc.com/tuv`
+    - `jkl.com/xyz`
+    - `xyz.com/abc` 
+
+3. "End Url" - Links will be order according to the last value in the rel URL
+  - ex.
+    - xyz.com/`abc`
+    - abc.com/`tuv`
+    - jkl.com/`xyz`
